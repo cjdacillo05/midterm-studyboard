@@ -10,32 +10,32 @@ export default function NewTaskForm({ groupId }: { groupId: string }) {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
 
-    try {
-      const res = await fetch(`/api/groups/${groupId}/tasks`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
-      });
+    fetch(`/api/groups/${groupId}/tasks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title }),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          setError(data.error ?? "Failed to add task.");
+          setIsSubmitting(false);
+          return;
+        }
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Failed to add task.");
+        setTitle("");
+        router.refresh();
         setIsSubmitting(false);
-        return;
-      }
-
-      setTitle("");
-      router.refresh();
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+      })
+      .catch(() => {
+        setError("Something went wrong. Please try again.");
+        setIsSubmitting(false);
+      });
   }
 
   return (
