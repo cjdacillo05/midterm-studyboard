@@ -31,17 +31,12 @@ export default function TaskItem({
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ done: next }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          setDone(previous);
-          setError("Failed to update task.");
-        }
-      })
-      .catch(() => {
+    }).then((res) => {
+      if (!res.ok) {
         setDone(previous);
         setError("Failed to update task.");
-      });
+      }
+    });
   }
 
   function handleDelete() {
@@ -52,20 +47,15 @@ export default function TaskItem({
 
     fetch(`/api/groups/${groupId}/tasks/${task.id}`, {
       method: "DELETE",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          setError("Failed to delete task.");
-          setIsDeleting(false);
-          return;
-        }
-
-        router.refresh();
-      })
-      .catch(() => {
+    }).then((res) => {
+      if (!res.ok) {
         setError("Failed to delete task.");
         setIsDeleting(false);
-      });
+        return;
+      }
+
+      router.refresh();
+    });
   }
 
   return (

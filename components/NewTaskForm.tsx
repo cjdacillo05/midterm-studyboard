@@ -19,23 +19,18 @@ export default function NewTaskForm({ groupId }: { groupId: string }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          setError(data.error ?? "Failed to add task.");
-          setIsSubmitting(false);
-          return;
-        }
+    }).then(async (res) => {
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error ?? "Failed to add task.");
+        setIsSubmitting(false);
+        return;
+      }
 
-        setTitle("");
-        router.refresh();
-        setIsSubmitting(false);
-      })
-      .catch(() => {
-        setError("Something went wrong. Please try again.");
-        setIsSubmitting(false);
-      });
+      setTitle("");
+      router.refresh();
+      setIsSubmitting(false);
+    });
   }
 
   return (
